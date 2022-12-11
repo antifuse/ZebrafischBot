@@ -32,6 +32,7 @@ class Program
 
         // provide database access to all modules
         var services = new ServiceCollection()
+            .AddSingleton<Localiser>()
             .AddDbContext<StorageContext>()
             .BuildServiceProvider();
 
@@ -46,6 +47,7 @@ class Program
 
         // register command modules
         commands.RegisterCommands<StandardModule>();
+        commands.RegisterCommands<RuleApprobation>();
 
         client.MessageCreated += CommandHandler;
     }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localisation locale="en-UK">
+    <strings>
+        <string key="localeChanged">Now zebrafishing in English!</string>
+        <string key="std.cogActivatedResp">*{0}* module activated.</string>
+        <string key="std.cogDeactivatedResp">*{0}* module deactivated.</string>
+        <string key="std.prefixSetResp">Prefix was changed to "{0}"</string>
+        <string key="std.pingResp">present!</string>
+        <string key="std.stdCogToggled">lol. lmao</string>
+        <string key="rouxls.setRoleResp">Accepting rules in this channel now grants {0} role.</string>
+    </strings>
+</localisation>

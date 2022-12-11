@@ -2,4 +2,5 @@
 /bin
 /Migrations
 /obj
-/storage.db
+/storage.*
+/.vscode

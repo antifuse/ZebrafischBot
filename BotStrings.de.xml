@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localisation locale="de-DE">
+    <strings>
+        <string key="localeChanged">Es wird auf Deutsch... gezebrafischt? Zebragefischt?</string>
+        <string key="std.cogActivatedResp">Modul *{0}* wurde aktiviert.</string>
+        <string key="std.cogDeactivatedResp">Modul *{0}* wurde deaktiviert.</string>
+        <string key="std.prefixSetResp">Das Präfix wurde zu "{0}" geändert.</string>
+        <string key="std.pingResp">ja mei</string>
+        <string key="std.stdCogToggled">lol. lmao</string>
+        <string key="rouxls.setRoleResp">Das Akzeptieren der Regeln in diesem Kanal verleiht nun die "{0}"-Rolle!</string>
+    </strings>
+</localisation>

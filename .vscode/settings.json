@@ -1,3 +1,11 @@
 {
-    "discord.enabled": false
+    "discord.enabled": false,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "Storage",
+            "database": "${workspaceFolder:ZebrafischBot}/storage.db"
+        }
+    ]
 }
