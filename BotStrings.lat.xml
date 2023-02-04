@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localisation locale="lat">
+    <strings>
+        <string key="localeChanged">Lingua latina daniatur.</string>
+        <string key="std.cogActivatedResp">Modulis *{0}* activata est.</string>
+        <string key="std.cogDeactivatedResp">Modulis *{0}* desactivata est.</string>
+        <string key="std.prefixSetResp">Prefix ad "{0}" modificatum est.</string>
+        <string key="std.pingResp">paucum</string>
+        <string key="std.stdCogToggled">ridens. clamans, etiam</string>
+        <string key="rouxls.setRoleResp">Partes nominis "{0}" nunc regulis acceptatis attributus erit!</string>
+    </strings>
+</localisation>
