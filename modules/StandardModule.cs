@@ -9,13 +9,10 @@ public class StandardModule : CommandCog
 
     public override string CogName => "std";
 
-    public StorageContext DB { private get; set; }
-    public Localiser Loc { private get; set; }
-
     [Command("ping")]
     public async Task PingCommand(CommandContext ctx) 
     {
-        await ctx.RespondAsync(Loc.GetString((await DB.GetGuildInfo(ctx.Guild.Id)).Locale, "std.pingResp"));
+        await ctx.RespondAsync(await TranslateString("std.pingResp", ctx));
     }
 
 
@@ -34,17 +31,17 @@ public class StandardModule : CommandCog
         var guildinfo = await DB.GetGuildInfo(ctx.Guild.Id);
         guildinfo.Prefix = prefix;
         await DB.SaveChangesAsync();
-        await ctx.RespondAsync(Loc.FormatString((await DB.GetGuildInfo(ctx.Guild.Id)).Locale, "std.prefixSetResp", prefix));
+        await ctx.RespondAsync(await FormatString("std.prefixSetResp", ctx, prefix));
     }
 
     [Command("togglecog")]
     [RequireUserPermissions(Permissions.ManageMessages)]
     public async Task ToggleCogCommand(CommandContext ctx, [RemainingText] string cog) 
     {        
-        var locale = (await DB.GetGuildInfo(ctx.Guild.Id)).Locale;
+        
         if (cog == CogName)
         {
-            await ctx.RespondAsync(Loc.GetString(locale, "std.stdCogToggled"));
+            await ctx.RespondAsync(await TranslateString("std.stdCogToggled", ctx));
             return;
         }
         var guildinfo = await DB.GetGuildInfo(ctx.Guild.Id);
@@ -52,23 +49,35 @@ public class StandardModule : CommandCog
         if (guildinfo.ActivatedCogs.Contains(cog)){
             guildinfo.ActivatedCogs.Remove(cog);
             
-            await ctx.RespondAsync(Loc.FormatString(locale, "std.cogDeactivatedResp", cog));
+            await ctx.RespondAsync(await FormatString("std.cogDeactivatedResp", ctx, cog));
         } 
         else {
             guildinfo.ActivatedCogs.Add(cog);
-            await ctx.RespondAsync(Loc.FormatString(locale, "std.cogActivatedResp", cog));
+            await ctx.RespondAsync(await FormatString("std.cogActivatedResp", ctx, cog));
         }
         DB.Entry(guildinfo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         await DB.SaveChangesAsync();
     }
 
-    [Command("setlocale")]
+    [Command("setguildlocale")]
     [RequireUserPermissions(Permissions.ManageGuild)]
-    public async Task SetLocaleCommand(CommandContext ctx, string locale) 
+    public async Task SetGuildLocaleCommand(CommandContext ctx, string locale) 
     {
         var guild = await DB.GetGuildInfo(ctx.Guild.Id);
         guild.Locale = locale;
         DB.Entry(guild).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        await DB.SaveChangesAsync();
+        await ctx.RespondAsync(Loc.GetString(locale, "localeChanged"));
+    }
+
+    [Command("setlocale")]
+    [Aliases(new string[] {"setmylocale", "setlanguage"})]
+    [RequireUserPermissions(Permissions.ManageGuild)]
+    public async Task SetLocaleCommand(CommandContext ctx, string locale) 
+    {
+        var user = await DB.GetUserInfo(ctx.User.Id);
+        user.Locale = locale;
+        DB.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         await DB.SaveChangesAsync();
         await ctx.RespondAsync(Loc.GetString(locale, "localeChanged"));
     }
