@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
 
@@ -7,7 +9,7 @@ public class StorageContext : DbContext
     public DbSet<DBUser> Users { get; set; }
     public DbSet<DBMessage> Messages { get; set; }
     public DbSet<DBChannel> Channels { get; set; }
-
+    public DbSet<Insult> Insults { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"Data Source=storage.db");
@@ -78,6 +80,7 @@ public class StorageContext : DbContext
         return channel;
     }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -86,6 +89,8 @@ public class StorageContext : DbContext
             .HasConversion(
                 v => String.Join(",", v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
+        modelBuilder.Entity<Insult>().HasKey(e => new {e.UserId, e.Insulted});
+        
     }
 
     
@@ -105,6 +110,8 @@ public class DBUser
     public ulong Id { get; set; }
 
     public string? Locale { get; set; }
+
+    public List<Insult> Insults { get; set; }
 }
 
 public class DBMessage
@@ -116,5 +123,15 @@ public class DBChannel
 {
     public ulong Id { get; set; }
     public ulong RouxlsRole { get; set; }
+}
+
+public class Insult 
+{
+    [ForeignKey("UserId")]
+    public DBUser User { get; set; }
+
+    public ulong UserId { get; set; }
+    public ulong Insulted { get; set; }
+    public string Message { get; set; }
 }
 
