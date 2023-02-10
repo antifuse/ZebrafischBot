@@ -103,6 +103,8 @@ public class DBGuild
 public class DBUser
 {
     public ulong Id { get; set; }
+
+    public string? Locale { get; set; }
 }
 
 public class DBMessage
