@@ -60,6 +60,7 @@ public class StandardModule : CommandCog
     }
 
     [Command("setguildlocale")]
+    [Aliases(new string[] {"setserverlocale", "setserverlanguage"})]
     [RequireUserPermissions(Permissions.ManageGuild)]
     public async Task SetGuildLocaleCommand(CommandContext ctx, string locale) 
     {
@@ -72,7 +73,6 @@ public class StandardModule : CommandCog
 
     [Command("setlocale")]
     [Aliases(new string[] {"setmylocale", "setlanguage"})]
-    [RequireUserPermissions(Permissions.ManageGuild)]
     public async Task SetLocaleCommand(CommandContext ctx, string locale) 
     {
         var user = await DB.GetUserInfo(ctx.User.Id);
