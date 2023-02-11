@@ -16,18 +16,15 @@ public class Insulter : CommandCog
             insult = new Insult()
             {
                 Insulted = opfer.Id,
-                User = user,
-                UserId = user.Id,
                 Message = insultText
             };
-            user.Insults.Add(insult);
+            
+            DB.Find<DBUser>(user.Id)?.Insults.Add(insult);
         } 
         else 
         {
             insult.Message = insultText;
         }
-        DB.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-        DB.Entry(insult).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         await DB.SaveChangesAsync();
         await ctx.RespondAsync(await FormatString("insult.InsultAdded", ctx, opfer.Username, insultText));
     }
@@ -42,5 +39,4 @@ public class Insulter : CommandCog
         }
         await ctx.Channel.SendMessageAsync(opfer.Mention + " " + insult.Message);
     }
-
 }

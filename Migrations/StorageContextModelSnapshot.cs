@@ -99,13 +99,13 @@ namespace ZebrafischBot.Migrations
 
             modelBuilder.Entity("Insult", b =>
                 {
-                    b.HasOne("DBUser", "User")
+                    b.HasOne("DBUser", "Sender")
                         .WithMany("Insults")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("DBUser", b =>

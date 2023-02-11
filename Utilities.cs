@@ -90,7 +90,7 @@ public class StorageContext : DbContext
                 v => String.Join(",", v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
         modelBuilder.Entity<Insult>().HasKey(e => new {e.UserId, e.Insulted});
-        
+        modelBuilder.Entity<DBUser>().HasMany<Insult>(u => u.Insults).WithOne(i => i.Sender).HasForeignKey(i => i.UserId);
     }
 
     
@@ -111,7 +111,7 @@ public class DBUser
 
     public string? Locale { get; set; }
 
-    public List<Insult> Insults { get; set; }
+    public List<Insult> Insults { get; set; } = new List<Insult>();
 }
 
 public class DBMessage
@@ -127,10 +127,9 @@ public class DBChannel
 
 public class Insult 
 {
-    [ForeignKey("UserId")]
-    public DBUser User { get; set; }
-
     public ulong UserId { get; set; }
+
+    public DBUser Sender { get; set; }
     public ulong Insulted { get; set; }
     public string Message { get; set; }
 }
