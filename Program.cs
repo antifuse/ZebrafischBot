@@ -48,6 +48,7 @@ class Program
         // register command modules
         commands.RegisterCommands<StandardModule>();
         commands.RegisterCommands<RuleApprobation>();
+        commands.RegisterCommands<Insulter>();
 
         client.MessageCreated += CommandHandler;
     }

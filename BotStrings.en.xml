@@ -8,5 +8,6 @@
         <string key="std.pingResp">present!</string>
         <string key="std.stdCogToggled">lol. lmao</string>
         <string key="rouxls.setRoleResp">Accepting rules in this channel now grants {0} role.</string>
+        <string key="insult.InsultAdded">User {0} will be insulted as "{1}"!</string>
     </strings>
 </localisation>
