@@ -34,6 +34,7 @@ public class Music : CommandCog
         var conn = await node.ConnectAsync(channel);
         conn.PlaybackFinished += async (c, e) =>
         {
+            if (e.Reason != DSharpPlus.Lavalink.EventArgs.TrackEndReason.Finished) return;
             var nextTrack = GetQueue(c.Guild.Id).NextTrack();
             if (nextTrack == null)
             {
