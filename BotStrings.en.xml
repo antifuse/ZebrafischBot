@@ -15,6 +15,11 @@
         <string key="music.resumed">Music resumed.</string>
         <string key="music.alreadyLeft">Currently not in a voice channel!</string>
         <string key="music.noNodes">Connection to Lavalink could not be established.</string>
-        <string key="music.NotFound">That track could not be found!</string>
+        <string key="music.notFound">That track could not be found!</string>
+        <string key="music.outOfBounds">The queue isn't even that long!</string>
+        <string key="music.addedTrack">Queued {0}.</string>
+        <string key="music.removed">Removed track.</string>
+        <string key="music.skipped">Track(s) skipped.</string>
+        <string key="music.cleared">Cleared queue.</string>
     </strings>
 </localisation>

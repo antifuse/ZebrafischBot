@@ -40,7 +40,9 @@ public class Music : CommandCog
                 await LeaveCommand(ctx);
                 return;
             }
+            
             await c.PlayAsync(nextTrack);
+            await ctx.Channel.SendMessageAsync(await FormatString("music.playingTrack", ctx, nextTrack.Author + " – " + nextTrack.Title));
             return;
         };
     }
@@ -62,6 +64,7 @@ public class Music : CommandCog
             return;
         }
         await conn.DisconnectAsync();
+        GetQueue(ctx.Guild.Id).Clear();
     }
 
     [Command("play")]
@@ -80,7 +83,7 @@ public class Music : CommandCog
         var loadResult = await node.Rest.GetTracksAsync(url);
         if (loadResult.LoadResultType == LavalinkLoadResultType.LoadFailed || loadResult.LoadResultType == LavalinkLoadResultType.NoMatches)
         {
-            await ctx.RespondAsync(await TranslateString("music.NotFound", ctx));
+            await ctx.RespondAsync(await TranslateString("music.notFound", ctx));
             return;
         }
         var track = loadResult.Tracks.First();
@@ -92,7 +95,7 @@ public class Music : CommandCog
         if (toPlay != null)
         {
             await conn.PlayAsync(track);
-            await ctx.RespondAsync(await FormatString("music.playingTrack", ctx, track.Author + " – " + track.Title));
+            await ctx.Channel.SendMessageAsync(await FormatString("music.playingTrack", ctx, track.Author + " – " + track.Title));
         }
     }
 
@@ -116,6 +119,73 @@ public class Music : CommandCog
         }
     }
 
+    [Command("skip")]
+    public async Task SkipCommand(CommandContext ctx)
+    {
+        var conn = await AssertGuildConnection(ctx);
+        if (conn == null) return;
+
+        var track = GetQueue(ctx.Guild.Id).NextTrack();
+        if (track == null)
+        {
+                await LeaveCommand(ctx);
+                return;
+        }
+        await conn.PlayAsync(track);
+        await ctx.RespondAsync(await TranslateString("music.skipped", ctx));
+    }
+
+    [Command("queue")]
+    public async Task QueueCommand(CommandContext ctx)
+    {
+        var conn = await AssertGuildConnection(ctx);
+        if (conn == null) return;
+        var queue = GetQueue(ctx.Guild.Id);
+        await ctx.RespondAsync(queue.ToString());
+    }
+
+    [Command("goto")]
+    public async Task GotoCommand(CommandContext ctx, int index)
+    {
+        var conn = await AssertGuildConnection(ctx);
+        if (conn == null) return;
+        var queue = GetQueue(ctx.Guild.Id);
+        var track = GetQueue(ctx.Guild.Id).Goto(index);
+        if (track == null)
+        {
+                await ctx.RespondAsync(await TranslateString("music.outOfBounds", ctx));
+                return;
+        }
+        await conn.PlayAsync(track);
+        await ctx.RespondAsync(await TranslateString("music.skipped", ctx));
+    }
+
+
+    [Command("clear")]
+    public async Task ClearCommand(CommandContext ctx)
+    {
+        var queue = GetQueue(ctx.Guild.Id);
+        queue.Clear();
+        await ctx.RespondAsync(await TranslateString("music.cleared", ctx));
+        var node = ctx.Client.GetLavalink().GetIdealNodeConnection();
+        if (node != null && node.GetGuildConnection(ctx.Guild).IsConnected) await LeaveCommand(ctx);
+    }
+
+    [Command("remove")]
+    [Aliases(new string[] {"unqueue"})]
+    public async Task RemoveTrackCommand(CommandContext ctx, int index)
+    {
+        var conn = await AssertGuildConnection(ctx);
+        if (conn == null) return;
+        var queue = GetQueue(ctx.Guild.Id);
+        var track = queue.RemoveTrack(index);
+        await ctx.RespondAsync(await TranslateString("music.removed", ctx));
+        if (track != null) 
+        {
+            await conn.PlayAsync(track);
+            await ctx.Channel.SendMessageAsync(await FormatString("music.playingTrack", ctx, track.Author + " – " + track.Title)); 
+        }
+    }
 
 
     public async Task<LavalinkGuildConnection?> AssertGuildConnection(CommandContext ctx)
@@ -176,6 +246,7 @@ public class MusicQueue
 
     public LavalinkTrack? RemoveTrack(int rPos)
     {
+        if (rPos >= list.Count) return null;
         if (rPos == pos)
         {
             var track = NextTrack();
@@ -194,7 +265,7 @@ public class MusicQueue
         var s = "```\n";
         for (int i = 0; i < list.Count; i++)
         {
-            s += $"[{(i == pos ? "\\*" : "")}]\t{list[i].Author} \t – \t {list[i].Title}\n";
+            s += $"{(i == pos ? "\\*" : "")}[{i}]\t{list[i].Author} \t – \t {list[i].Title}\n";
         }
         return s + "```";
     }

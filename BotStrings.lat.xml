@@ -15,6 +15,11 @@
         <string key="music.resumed">Cantum resumpsi.</string>
         <string key="music.alreadyLeft">Non in cubiculo vocis sum!</string>
         <string key="music.noNodes">Conexionem ad Lavalink incipere non possum.</string>
-        <string key="music.NotFound">Hunc cantum invenire non possum.</string>
+        <string key="music.notFound">Hunc cantum invenire non possum.</string>
+        <string key="music.outOfBounds">Series musicae numero brevior est!</string>
+        <string key="music.addedTrack">{0} seriem musicae addidi.</string>
+        <string key="music.removed">Cantum delevi.</string>
+        <string key="music.skipped">Cantum transii.</string>
+        <string key="music.cleared">Seriem musicae delevi!</string>
     </strings>
 </localisation>
