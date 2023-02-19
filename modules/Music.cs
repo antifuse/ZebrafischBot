@@ -133,6 +133,7 @@ public class Music : CommandCog
                 return;
         }
         await conn.PlayAsync(track);
+        await ctx.Channel.SendMessageAsync(await FormatString("music.playingTrack", ctx, track.Author + " – " + track.Title));
         await ctx.RespondAsync(await TranslateString("music.skipped", ctx));
     }
 
