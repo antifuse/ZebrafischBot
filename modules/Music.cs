@@ -68,7 +68,7 @@ public class Music : CommandCog
         }
         var track = loadResult.Tracks.First();
         await conn.PlayAsync(track);
-        await ctx.RespondAsync(await FormatString("music.PlayingTrack", ctx, track.ToString()));
+        await ctx.RespondAsync(await FormatString("music.playingTrack", ctx, track.ToString()));
     }
 
     [Command("pause")]
@@ -92,13 +92,13 @@ public class Music : CommandCog
         {
             await conn.ResumeAsync();
             paused = false;
-            await ctx.RespondAsync(await TranslateString("music.Resumed", ctx));
+            await ctx.RespondAsync(await TranslateString("music.resumed", ctx));
         } 
         else 
         {
             await conn.PauseAsync();
             paused = true;
-            await ctx.RespondAsync(await TranslateString("music.Paused", ctx));
+            await ctx.RespondAsync(await TranslateString("music.paused", ctx));
         }
     }
 

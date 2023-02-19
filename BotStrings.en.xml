@@ -9,5 +9,12 @@
         <string key="std.stdCogToggled">lol. lmao</string>
         <string key="rouxls.setRoleResp">Accepting rules in this channel now grants {0} role.</string>
         <string key="insult.InsultAdded">User {0} will be insulted as "{1}"!</string>
+
+        <string key="music.playingTrack">Now playing {0}</string>
+        <string key="music.paused">Music paused.</string>
+        <string key="music.resumed">Music resumed.</string>
+        <string key="music.alreadyLeft">Currently not in a voice channel!</string>
+        <string key="music.noNodes">Connection to Lavalink could not be established.</string>
+        <string key="music.NotFound">That track could not be found!</string>
     </strings>
 </localisation>

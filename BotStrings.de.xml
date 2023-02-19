@@ -9,5 +9,12 @@
         <string key="std.stdCogToggled">lol. lmao</string>
         <string key="rouxls.setRoleResp">Das Akzeptieren der Regeln in diesem Kanal verleiht nun die "{0}"-Rolle!</string>
         <string key="insult.InsultAdded">Die Person {0} wird nun mit "{1}" beleidigt!</string>
+
+        <string key="music.playingTrack">Es spielt: {0}</string>
+        <string key="music.paused">Musik pausiert.</string>
+        <string key="music.resumed">Musik fortgesetzt.</string>
+        <string key="music.alreadyLeft">Ich bin in keinem Voice Channel!</string>
+        <string key="music.noNodes">Verbindung zu Lavalink kann nicht hergestellt werden.</string>
+        <string key="music.NotFound">Konnte nicht gefunden werden.</string>
     </strings>
 </localisation>

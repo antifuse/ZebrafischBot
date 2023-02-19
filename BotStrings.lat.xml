@@ -9,5 +9,12 @@
         <string key="std.stdCogToggled">ridens. clamans, etiam</string>
         <string key="rouxls.setRoleResp">Partes nominis "{0}" nunc regulis acceptatis attributus erit!</string>
         <string key="insult.InsultAdded">{0} nunc "{1}" offenditur!</string>
+
+        <string key="music.playingTrack">Canens musicam *{0}*</string>
+        <string key="music.paused">Cantum interrupi.</string>
+        <string key="music.resumed">Cantum resumpsi.</string>
+        <string key="music.alreadyLeft">Non in cubiculo vocis sum!</string>
+        <string key="music.noNodes">Conexionem ad Lavalink incipere non possum.</string>
+        <string key="music.NotFound">Hunc cantum invenire non possum.</string>
     </strings>
 </localisation>
