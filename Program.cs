@@ -1,5 +1,6 @@
 ﻿namespace ZebrafischBot;
 using DSharpPlus;
+using DSharpPlus.Lavalink;
 using System.Linq;
 
 using Microsoft.Extensions.Configuration;
@@ -8,12 +9,15 @@ using System.Threading.Tasks;
 using DSharpPlus.EventArgs;
 using DSharpPlus.CommandsNext;
 using Microsoft.Extensions.DependencyInjection;
+using DSharpPlus.Net;
 
 class Program
 {
     DiscordClient client;
     IConfiguration _config;
     StorageContext storage;
+
+    LavalinkExtension lavalink;
 
     public Program()
     {
@@ -30,6 +34,11 @@ class Program
             Intents = DiscordIntents.All
         });
 
+        
+        
+
+        lavalink = client.UseLavalink();
+
         // provide database access to all modules
         var services = new ServiceCollection()
             .AddSingleton<Localiser>()
@@ -37,6 +46,8 @@ class Program
             .BuildServiceProvider();
 
         storage = services.GetService<StorageContext>() ?? new StorageContext();
+
+
 
         // setup commands module
         var commands = client.UseCommandsNext(new CommandsNextConfiguration()
@@ -49,6 +60,7 @@ class Program
         commands.RegisterCommands<StandardModule>();
         commands.RegisterCommands<RuleApprobation>();
         commands.RegisterCommands<Insulter>();
+        commands.RegisterCommands<Music>();
 
         client.MessageCreated += CommandHandler;
     }
@@ -72,7 +84,24 @@ class Program
     {
         Program bot = new Program();
         Console.WriteLine("trogi lmao");
+
+
+        var endpoint = new ConnectionEndpoint
+            {
+                Hostname = "127.0.0.1", 
+                Port = 2333 
+            };
+
+        var lavalinkConfig = new LavalinkConfiguration
+            {
+                Password = "g4m1ng", 
+                RestEndpoint = endpoint,
+                SocketEndpoint = endpoint
+            };
+
+        
         await bot.client.ConnectAsync();
+        await bot.lavalink.ConnectAsync(lavalinkConfig);
         await Task.Delay(-1);
     }
 
