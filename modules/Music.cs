@@ -8,6 +8,12 @@ public class Music : CommandCog
     public override string CogName => "music";
     private bool paused = false;
 
+    private Dictionary<ulong, MusicQueue> queues = new Dictionary<ulong, MusicQueue>();
+    private MusicQueue GetQueue(ulong id)
+    {
+        if (!queues.ContainsKey(id)) queues.Add(id, new MusicQueue());
+        return queues[id];
+    }
 
     [Command("join")]
     public async Task JoinCommand(CommandContext ctx)
@@ -25,7 +31,18 @@ public class Music : CommandCog
             await ctx.RespondAsync(await TranslateString("music.notInVoice", ctx));
             return;
         }
-        await node.ConnectAsync(channel);
+        var conn = await node.ConnectAsync(channel);
+        conn.PlaybackFinished += async (c, e) =>
+        {
+            var nextTrack = GetQueue(c.Guild.Id).NextTrack();
+            if (nextTrack == null)
+            {
+                await LeaveCommand(ctx);
+                return;
+            }
+            await c.PlayAsync(nextTrack);
+            return;
+        };
     }
 
     [Command("leave")]
@@ -67,34 +84,31 @@ public class Music : CommandCog
             return;
         }
         var track = loadResult.Tracks.First();
-        await conn.PlayAsync(track);
-        await ctx.RespondAsync(await FormatString("music.playingTrack", ctx, track.ToString()));
+        var queue = GetQueue(ctx.Guild.Id);
+        var toPlay = queue.AddTrack(track);
+
+
+        await ctx.RespondAsync(await FormatString("music.addedTrack", ctx, track.Author + " – " + track.Title));
+        if (toPlay != null)
+        {
+            await conn.PlayAsync(track);
+            await ctx.RespondAsync(await FormatString("music.playingTrack", ctx, track.Author + " – " + track.Title));
+        }
     }
 
     [Command("pause")]
     public async Task PauseCommand(CommandContext ctx)
     {
-        var lava = ctx.Client.GetLavalink();
-        var node = lava.GetIdealNodeConnection();
-        if (node == null)
-        {
-            await ctx.RespondAsync(await TranslateString("music.noNodes", ctx));
-            return;
-        }
-        var conn = node.GetGuildConnection(ctx.Guild);
-        if (!conn.IsConnected)
-        {
-            await ctx.RespondAsync(await TranslateString("music.alreadyLeft", ctx));
-            return;
-        }
+        var conn = await AssertGuildConnection(ctx);
+        if (conn == null) return;
 
         if (paused)
         {
             await conn.ResumeAsync();
             paused = false;
             await ctx.RespondAsync(await TranslateString("music.resumed", ctx));
-        } 
-        else 
+        }
+        else
         {
             await conn.PauseAsync();
             paused = true;
@@ -102,5 +116,86 @@ public class Music : CommandCog
         }
     }
 
-    
+
+
+    public async Task<LavalinkGuildConnection?> AssertGuildConnection(CommandContext ctx)
+    {
+        var lava = ctx.Client.GetLavalink();
+        var node = lava.GetIdealNodeConnection();
+        if (node == null)
+        {
+            await ctx.RespondAsync(await TranslateString("music.noNodes", ctx));
+            return null;
+        }
+        var conn = node.GetGuildConnection(ctx.Guild);
+        if (!conn.IsConnected)
+        {
+            await ctx.RespondAsync(await TranslateString("music.alreadyLeft", ctx));
+            return null;
+        }
+        return conn;
+    }
+
+
+}
+
+public class MusicQueue
+{
+    List<LavalinkTrack> list = new List<LavalinkTrack>();
+    int pos = 0;
+
+    public void Clear()
+    {
+        list = new List<LavalinkTrack>();
+        pos = 0;
+    }
+
+    public LavalinkTrack? AddTrack(LavalinkTrack t)
+    {
+        list.Add(t);
+        if (list.Count == 1) return t;
+        return null;
+    }
+
+    public LavalinkTrack? Goto(int nPos)
+    {
+        if (nPos >= list.Count)
+        {
+            return null;
+        }
+        pos = nPos;
+        return list[pos];
+    }
+
+    public LavalinkTrack? NextTrack()
+    {
+        if (list.Count == 0) return null;
+        pos = pos + 1 == list.Count ? 0 : pos + 1;
+        return list[pos];
+    }
+
+    public LavalinkTrack? RemoveTrack(int rPos)
+    {
+        if (rPos == pos)
+        {
+            var track = NextTrack();
+            pos--;
+            list.RemoveAt(pos);
+            return track;
+        }
+        list.RemoveAt(rPos);
+        if (rPos < pos) pos--;
+        return null;
+    }
+
+    public override string ToString()
+    {
+        if (list.Count == 0) return "--";
+        var s = "```\n";
+        for (int i = 0; i < list.Count; i++)
+        {
+            s += $"[{(i == pos ? "\\*" : "")}]\t{list[i].Author} \t – \t {list[i].Title}\n";
+        }
+        return s + "```";
+    }
 }
